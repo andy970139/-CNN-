@@ -2,6 +2,10 @@
 使用20日K線圖做為形態學預測未來股價趨勢
 
 目標:分別以20日K線圖與20日之均線與收盤價曲線(5日、10日、20日)作為輸入，預測未來股價趨勢(Y)
+
+
+
+
 ![image](https://github.com/andy970139/-CNN-/blob/main/K%E7%B7%9A%E5%9C%96.png)
 ![image](https://github.com/andy970139/-CNN-/blob/main/%E5%9D%87%E7%B7%9A.png)
 資料集: 108檔2018至2021股價資料(大部分為0050成分股)
