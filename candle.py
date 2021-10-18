@@ -167,116 +167,83 @@ x2=np.array(x2)
 y=np.vstack(y)
 #%%
 
-main_input = Input(shape=(window, 25),name='inputLayer')
-cnn1=Conv1D(filters = 16,kernel_size=1,activation='relu',padding='same')(main_input)
-# cnn1=BatchNormalization()(cnn1)
-cnn1=LSTM(units = 8, return_sequences = True)(cnn1)
-cnn1=attention_3d_block(cnn1)
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1" #會使用CPU
+import tensorflow as tf
+from tensorflow.keras import regularizers
+from tensorflow.keras import regularizers
+from tensorflow.keras.layers import BatchNormalization,LayerNormalization,Flatten,Conv2D,Conv3D,GlobalAveragePooling2D,MaxPooling2D
+from tensorflow.keras.layers import Input, Embedding, LSTM, Dense,concatenate,Bidirectional
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import LayerNormalization
+# import tensorflow_addons as tfa
+# from attention import Attention
+# window=44
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+
+config = ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 22
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+
+main_input = Input(shape=(80,150,3),name='inputLayer')
 
 
-cnn3=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(main_input)
-# cnn3=BatchNormalization()(cnn3)
-cnn3=LSTM(units = 8, return_sequences = True)(cnn3)
-cnn3=attention_3d_block(cnn3)
-
-
-cnn5=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(main_input)
-cnn5=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(cnn5)
-cnn5=LSTM(units = 8, return_sequences = True)(cnn5)
-cnn5=attention_3d_block(cnn5)
-
-
-
-
-cnn7=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(main_input)
-cnn7=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(cnn7)
-cnn7=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(cnn7)
-cnn7=LSTM(units = 8, return_sequences = True)(cnn7)
-cnn7=attention_3d_block(cnn7)
-
+cnn3=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(main_input)
 
 
 
-cocatlayer= concatenate([cnn1, cnn3,cnn5,cnn7])
-cocatlayer=Bidirectional(LSTM(units = 16, return_sequences = True))(cocatlayer)
-# cocatlayer=Bidirectional(tf.keras.layers.RNN(tfa.rnn.LayerNormLSTMCell(16), return_sequences = True))(cocatlayer)
-#fcocatlayer=Dropout(0.2)(fcocatlayer)
-cocatlayer=attention_3d_block(cocatlayer)
+cnn5=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(main_input)
+cnn5=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(cnn5)
 
+cnn7=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(main_input)
+cnn7=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(cnn7)
+cnn7=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(cnn7)
+
+
+cocatlayer= concatenate([ cnn3,cnn5,cnn7])
 print(cocatlayer.shape)
-#lnLSTMCell = tfa.rnn.LayerNormLSTMCell(32)
-#tf.keras.layers.RNN(lnLSTMCell, return_sequences=True, return_state=True)
-# cocatlayer=tf.keras.layers.RNN(tfa.rnn.LayerNormLSTMCell(64), return_sequences = True)(cocatlayer)
-#cocatlayer=LSTM(units = 32, return_sequences = True)(cocatlayer)
+cocatlayer=Conv2D(filters = 16,kernel_size=(1,1),activation='relu')(cocatlayer)
+
+
+candle_input = Input(shape=(80,150,3),name='candle_inputer')
+
+
+cnn3c=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(candle_input)
 
 
 
-faren_input = Input(shape=(window, 19),name='fareninputLayer')
-fcnn1=Conv1D(filters = 16,kernel_size=1,activation='relu',padding='same')(faren_input)
-# fcnn1=BatchNormalization()(fcnn1)
+cnn5c=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(candle_input)
+cnn5c=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(cnn5c)
 
-fcnn1=LSTM(units = 8, return_sequences = True)(fcnn1)
-fcnn1=attention_3d_block(fcnn1)
-
-fcnn3=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(faren_input)
-# cnn3=BatchNormalization()(cnn3)
-fcnn3=LSTM(units = 8, return_sequences = True)(fcnn3)
-fcnn3=attention_3d_block(fcnn3)
+cnn7c=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(candle_input)
+cnn7c=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(cnn7c)
+cnn7c=Conv2D(filters = 16,kernel_size=(3,3),activation='relu',padding='same')(cnn7c)
 
 
-fcnn5=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(faren_input)
-fcnn5=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(fcnn5)
-fcnn5=LSTM(units = 8, return_sequences = True)(fcnn5)
-fcnn5=attention_3d_block(fcnn5)
+cocatlayerc= concatenate([ cnn3c,cnn5c,cnn7c])
 
 
+cocatlayerc=Conv2D(filters = 16,kernel_size=(1,1),activation='relu')(cocatlayerc)
 
 
-fcnn7=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(faren_input)
-fcnn7=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(fcnn7)
-fcnn7=Conv1D(filters = 16,kernel_size=3,activation='relu',padding='same')(fcnn7)
-fcnn7=LSTM(units = 8, return_sequences = True)(cnn7)
-fcnn7=attention_3d_block(fcnn7)
+output= concatenate([ cocatlayer,cocatlayerc])
 
-
-
-fcocatlayer= concatenate([fcnn1, fcnn3,fcnn5,fcnn7])
-print(fcocatlayer.shape)
-# fcocatlayer=tf.keras.layers.RNN(tfa.rnn.LayerNormLSTMCell(64), return_sequences = True)(fcocatlayer)
-# fcocatlayer=Bidirectional(tf.keras.layers.RNN(tfa.rnn.LayerNormLSTMCell(16), return_sequences = True))(fcocatlayer)
-fcocatlayer=Bidirectional(LSTM(units = 16, return_sequences = True))(fcocatlayer)
-#fcocatlayer=Dropout(0.2)(fcocatlayer)
-fcocatlayer=attention_3d_block(fcocatlayer)
-print(fcocatlayer.shape)
-output=concatenate([cocatlayer, fcocatlayer])
-# x=Dropout(0.2)(x)
+output=Conv2D(filters = 8,kernel_size=(1,1),activation='relu')(output)
+print(output.shape)
+output=GlobalAveragePooling2D()(output)
 # print(x.shape)
-
-
-# q=x
-
-# 
-
-output=Bidirectional(LSTM(units = 8, return_sequences = True))(output)
-# x=LSTM(32, return_sequences = True,kernel_regularizer=regularizers.l1_l2(l1=0.001, l2=0.001))(x)
-output = attention_3d_block(output)
-# x=tf.keras.layers.RNN(tfa.rnn.LayerNormLSTMCell(8), return_sequences = False)(x)
-# x = attention_3d_block(x)
-# print(x.shape)
-# x = Attention(8)(x)
-output = Flatten()(output)
-# print(x.shape)
-# x=Dropout(0.2)(x)
-# x=Dense(units = 4,activation='relu')(x)
-# x=Dense(units = 8,activation='relu')(x)
+# x=Flatten()(x)
 output=Dense(units =1)(output)
-
-regressor=Model([main_input,faren_input],output)
-# regressor=Model([main_input,candle_input],output)
+# print(x.shape)
+regressor=Model([main_input,candle_input],output)
 regressor.compile(optimizer = 'adam', loss = 'mean_squared_error',
               metrics=['mae'])
+# regressor.compile(optimizer = 'adam', loss = 'binary_crossentropy',
+#               metrics=[tf.keras.metrics.Precision(),'accuracy'])
 regressor.summary()
-
 #%%
 from tensorflow.keras import backend as K
 Trainx = K.cast_to_floatx(Trainx)
