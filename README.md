@@ -23,3 +23,7 @@
 
 
 預測效果沒有很好，認為Y值定義可能有瑕疵，且由於硬碟io效能方便輸入資料圖片不夠大數量也不足。
+
+
+模型架構為雙輸入之Inception模型最後接上GlobalAverage層取代攤平層並輸出
+![image](https://github.com/andy970139/-CNN-/blob/main/%E7%B5%90%E6%A7%8B.PNG)
