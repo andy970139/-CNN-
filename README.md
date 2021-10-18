@@ -8,6 +8,11 @@
 
 ![image](https://github.com/andy970139/-CNN-/blob/main/K%E7%B7%9A%E5%9C%96.png)
 ![image](https://github.com/andy970139/-CNN-/blob/main/%E5%9D%87%E7%B7%9A.png)
+
+
+
+
+
 資料集: 108檔2018至2021股價資料(大部分為0050成分股)
 趨勢定義:
 未來10天總漲幅超過0且未來10日最大之最低價高於過去資料(20日)之最高價視為往上趨勢(Y=1)
